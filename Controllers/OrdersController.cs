@@ -23,7 +23,7 @@ namespace SmallShopSystem.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Orders.Include(o => o.Customer);
+            var applicationDbContext = _context.Orders.Include(o => o.Customer).Include(o => o.Book);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -34,6 +34,7 @@ namespace SmallShopSystem.Controllers
 
             var order = await _context.Orders
                 .Include(o => o.Customer)
+                .Include(o => o.Book)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (order == null) return NotFound();
@@ -109,6 +110,7 @@ namespace SmallShopSystem.Controllers
 
             var order = await _context.Orders
                 .Include(o => o.Customer)
+                .Include(o => o.Book)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (order == null) return NotFound();

@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<SmallShopSystem.Models.Order>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "订单管理";
 }
 
-<h1>Index</h1>
+<h1>订单管理</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -19,6 +19,12 @@
                 @Html.DisplayNameFor(model => model.Status)
             </th>
             <th>
+                图书
+            </th>
+            <th>
+                数量
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Customer)
             </th>
             <th></th>
@@ -31,10 +37,16 @@
                 @Html.DisplayFor(modelItem => item.OrderDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
+                <span class="badge bg-info text-dark">@Html.DisplayFor(modelItem => item.Status)</span>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Customer.Id)
+                @item.Book?.Title
+            </td>
+            <td>
+                @item.Quantity
+            </td>
+            <td>
+                @item.Customer?.Name
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

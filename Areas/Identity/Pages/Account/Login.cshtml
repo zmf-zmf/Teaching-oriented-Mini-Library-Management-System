@@ -1,0 +1,45 @@
+@page
+@model LoginModel
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "µÇÂ¼";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4 mb-3">ÕËºÅµÇÂ¼</h1>
+
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Email" class="form-label"></label>
+                        <input asp-for="Input.Email" class="form-control" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Password" class="form-label"></label>
+                        <input asp-for="Input.Password" class="form-control" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input asp-for="Input.RememberMe" class="form-check-input" />
+                        <label asp-for="Input.RememberMe" class="form-check-label"></label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">µÇÂ¼</button>
+                </form>
+
+                <hr />
+                <div class="d-flex justify-content-between">
+                    <a asp-page="/Account/ForgotPassword" asp-area="Identity">Íü¼ÇÃÜÂë</a>
+                    <a asp-page="/Account/Register" asp-area="Identity">×¢²áÕËºÅ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SmallShopSystem.Models;
 using SmallShopSystem.Data;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 
@@ -27,6 +28,21 @@ namespace SmallShopSystem.Controllers
             // ¿â´æÔ¤¾¯ (ãÐÖµ 10)
             ViewBag.LowStockCount = _context.Books
                 .Count(b => b.Stock < 10);
+
+            ViewBag.RecentPendingOrders = _context.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.Book)
+                .Where(o => o.Status == "´ý·¢»õ")
+                .OrderByDescending(o => o.OrderDate)
+                .Take(5)
+                .ToList();
+
+            ViewBag.FeaturedBooks = _context.Books
+                .Include(b => b.Category)
+                .Include(b => b.Publisher)
+                .OrderBy(b => b.Id)
+                .Take(6)
+                .ToList();
 
             return View();
         }

@@ -8,18 +8,21 @@
     {
         var currentUser = await UserManager.GetUserAsync(User);
         var roles = currentUser == null ? Array.Empty<string>() : await UserManager.GetRolesAsync(currentUser);
-        var roleName = roles.Count > 0 ? roles[0] : "User";
+        var roleName = roles.Count > 0 ? roles[0] : "Customer";
         var roleText = roleName switch
         {
             "Admin" => "管理员",
             "Warehouse" => "仓库员",
             "Support" => "客服",
             "Customer" => "客户",
-            _ => roleName
+            _ => "客户"
         };
 
         <li class="nav-item me-2">
             <span class="badge bg-info text-dark">@roleText</span>
+        </li>
+        <li class="nav-item me-2">
+            <a class="nav-link" asp-controller="Profile" asp-action="Index">个人中心</a>
         </li>
         <li class="nav-item">
             <span class="nav-link">您好，@UserManager.GetUserName(User)</span>

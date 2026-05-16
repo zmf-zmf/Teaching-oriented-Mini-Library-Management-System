@@ -1,13 +1,14 @@
 ﻿@model SmallShopSystem.Models.Book
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "图书详情";
+    var isCustomer = User.IsInRole("Customer") || !(User.IsInRole("Admin") || User.IsInRole("Warehouse") || User.IsInRole("Support"));
 }
 
-<h1>Details</h1>
+<h1>图书详情</h1>
 
 <div>
-    <h4>Book</h4>
+    <h4>图书信息</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -35,20 +36,27 @@
             @Html.DisplayFor(model => model.Stock)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
+            分类
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category.Id)
+            @Model.Category?.Name
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Publisher)
+            出版商
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Publisher.Id)
+            @Model.Publisher?.Name
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    @if (!isCustomer)
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+    }
+    else
+    {
+        <a asp-action="Order" asp-route-id="@Model?.Id" class="btn btn-primary">下单</a>
+    }
     <a asp-action="Index">Back to List</a>
 </div>

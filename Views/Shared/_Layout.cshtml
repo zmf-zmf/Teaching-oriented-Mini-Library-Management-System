@@ -8,32 +8,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.2/lux/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SmallShopSystem.styles.css" asp-append-version="true" />
-    <style>
-        /* 增加一点自定义样式，让页面更有质感 */
-        body { background-color: #f8f9fa; }
-        .navbar { text-transform: uppercase; letter-spacing: 1px; }
-        .main-container {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
-            margin-top: 2rem;
-            padding: 2rem;
-        }
-        footer { margin-top: 3rem; }
-    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-dark bg-dark border-bottom mb-3">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom shadow-sm">
             <div class="container-fluid">
-                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">📚 SmallShop</a>
+                <a class="navbar-brand fw-bold text-uppercase d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index"><span>📘</span><span>SmallShop</span></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between align-items-lg-center">
+                    <ul class="navbar-nav flex-grow-1 align-items-lg-center gap-lg-1">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">首页</a>
+                            <a class="nav-link px-lg-3" asp-area="" asp-controller="Home" asp-action="Index">🏠 首页</a>
                         </li>
 
                         @if (User?.Identity?.IsAuthenticated ?? false)
@@ -41,45 +28,49 @@
                             var isAdmin = User.IsInRole("Admin");
                             var isWarehouse = User.IsInRole("Warehouse");
                             var isSupport = User.IsInRole("Support");
-                            var isCustomer = User.IsInRole("Customer");
+                            var isCustomer = User.IsInRole("Customer") || !(isAdmin || isWarehouse || isSupport);
 
                             @if (isAdmin || isCustomer)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Books" asp-action="Index">图书信息</a>
+                                    <a class="nav-link px-lg-3" asp-area="" asp-controller="Books" asp-action="Index">📚 图书</a>
                                 </li>
                             }
 
                             @if (isAdmin)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Categories" asp-action="Index">分类</a>
+                                    <a class="nav-link px-lg-3" asp-area="" asp-controller="Categories" asp-action="Index">🗂️ 分类</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Publishers" asp-action="Index">出版商</a>
+                                    <a class="nav-link px-lg-3" asp-area="" asp-controller="Publishers" asp-action="Index">🏢 出版商</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Customers" asp-action="Index">客户管理</a>
+                                    <a class="nav-link px-lg-3" asp-area="" asp-controller="Customers" asp-action="Index">👥 客户</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link fw-bold text-info" asp-area="" asp-controller="Orders" asp-action="Index">订单/发货</a>
+                                    <a class="nav-link px-lg-3 fw-semibold text-info" asp-area="" asp-controller="Orders" asp-action="Index">🚚 订单/发货</a>
                                 </li>
                             }
                             else if (isWarehouse)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link fw-bold text-info" asp-area="" asp-controller="Orders" asp-action="Index">订单/发货</a>
+                                    <a class="nav-link px-lg-3 fw-semibold text-info" asp-area="" asp-controller="Orders" asp-action="Index">🚚 订单/发货</a>
                                 </li>
                             }
                             else if (isSupport)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Customers" asp-action="Index">客户管理</a>
+                                    <a class="nav-link px-lg-3" asp-area="" asp-controller="Customers" asp-action="Index">👥 客户</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link fw-bold text-info" asp-area="" asp-controller="Orders" asp-action="Index">订单/发货</a>
+                                    <a class="nav-link px-lg-3 fw-semibold text-info" asp-area="" asp-controller="Orders" asp-action="Index">🚚 订单/发货</a>
                                 </li>
                             }
+
+                            <li class="nav-item">
+                                <a class="nav-link px-lg-3" asp-controller="Profile" asp-action="Index">👤 个人中心</a>
+                            </li>
                         }
                     </ul>
 
@@ -90,14 +81,17 @@
     </header>
 
     <div class="container">
-        <main role="main" class="pb-3 main-container">
+        <main role="main" class="page-shell py-4 py-lg-5">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted bg-white py-3">
+    <footer class="border-top footer bg-white py-3 shadow-sm mt-auto">
         <div class="container">
-            &copy; 2026 - SmallShopSystem - 管理后台
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 text-muted small">
+                <span>© 2026 - SmallShopSystem</span>
+                <span>📚 书店管理系统 · B/S 架构</span>
+            </div>
         </div>
     </footer>
 

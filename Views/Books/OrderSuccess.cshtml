@@ -1,0 +1,13 @@
+@model SmallShopSystem.Models.Order
+
+@{
+    ViewData["Title"] = "下单成功";
+}
+
+<div class="alert alert-success mt-4">
+    下单成功！订单编号：@Model.Id ，图书：@Model.Book?.Title ，数量：@Model.Quantity ，状态：@Model.Status
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-primary">返回图书列表</a>
+</div>

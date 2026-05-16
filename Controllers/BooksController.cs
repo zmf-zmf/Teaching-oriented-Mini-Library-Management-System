@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using SmallShopSystem.Data;
 using SmallShopSystem.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -15,10 +16,12 @@ namespace SmallShopSystem.Controllers
     public class BooksController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public BooksController(ApplicationDbContext context)
+        public BooksController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Books
@@ -137,6 +140,103 @@ namespace SmallShopSystem.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> Order(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var book = await _context.Books
+                .Include(b => b.Category)
+                .Include(b => b.Publisher)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            return View(book);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> Order(int id, int quantity)
+        {
+            if (quantity <= 0)
+            {
+                ModelState.AddModelError(string.Empty, "数量必须大于 0。");
+            }
+
+            var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(book);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null || string.IsNullOrWhiteSpace(user.Email))
+            {
+                return Challenge();
+            }
+
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == user.Email);
+            if (customer == null)
+            {
+                customer = new Customer
+                {
+                    Name = user.Email,
+                    Email = user.Email,
+                    Address = "待完善"
+                };
+
+                _context.Customers.Add(customer);
+                await _context.SaveChangesAsync();
+            }
+
+            var order = new Order
+            {
+                CustomerId = customer.Id,
+                BookId = book.Id,
+                Quantity = quantity,
+                OrderDate = DateTime.Now,
+                Status = "待发货"
+            };
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(OrderSuccess), new { id = order.Id });
+        }
+
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> OrderSuccess(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders
+                .Include(o => o.Book)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order);
         }
 
         private bool BookExists(int id) => _context.Books.Any(e => e.Id == id);

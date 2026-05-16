@@ -1,0 +1,143 @@
+@model SmallShopSystem.Models.ProfileViewModel
+
+@{
+    ViewData["Title"] = "个人中心";
+}
+
+<div class="page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">?? 个人中心</h1>
+        <p class="text-muted mb-0">管理你的昵称、地址、密码和账号状态。</p>
+    </div>
+</div>
+
+@if (TempData["ProfileMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["ProfileMessage"]</div>
+}
+
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <div class="text-muted small">?? 账号信息</div>
+                        <h2 class="h5 mb-0">@Model.Email</h2>
+                    </div>
+                    <span class="badge bg-info text-dark">@string.Join(" / ", Model.Roles.DefaultIfEmpty("Customer"))</span>
+                </div>
+
+                <div class="mb-3">
+                    <div class="text-muted small">??? 昵称</div>
+                    <div class="fw-semibold">@Model.Nickname</div>
+                </div>
+                <div class="mb-3">
+                    <div class="text-muted small">?? 地址</div>
+                    <div class="fw-semibold">@Model.Address</div>
+                </div>
+                <div class="mb-3">
+                    <div class="text-muted small">?? 用户名</div>
+                    <div class="fw-semibold">@Model.UserName</div>
+                </div>
+
+                <form asp-action="UpdateProfile" method="post" class="mt-4">
+                    <h3 class="h6 mb-3">?? 修改资料</h3>
+                    <div class="mb-3">
+                        <label asp-for="Nickname" class="form-label">昵称</label>
+                        <input asp-for="Nickname" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label">地址</label>
+                        <input asp-for="Address" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">保存资料</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5 mb-3">?? 修改密码</h2>
+                <form asp-action="ChangePassword" method="post">
+                    <div class="mb-3">
+                        <label asp-for="CurrentPassword" class="form-label">当前密码</label>
+                        <input asp-for="CurrentPassword" class="form-control" type="password" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NewPassword" class="form-label">新密码</label>
+                        <input asp-for="NewPassword" class="form-control" type="password" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ConfirmNewPassword" class="form-label">确认新密码</label>
+                        <input asp-for="ConfirmNewPassword" class="form-control" type="password" />
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100">修改密码</button>
+                </form>
+
+                <hr class="my-4" />
+
+                <h2 class="h5 mb-3 text-danger">??? 注销账号</h2>
+                <p class="text-muted small">注销后将删除身份信息和客户资料，操作不可恢复。</p>
+                <form asp-action="DeleteAccount" method="post">
+                    <div class="mb-3">
+                        <label asp-for="DeletePassword" class="form-label">输入密码确认</label>
+                        <input asp-for="DeletePassword" class="form-control" type="password" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="DeleteConfirmText" class="form-label">输入“注销”确认</label>
+                        <input asp-for="DeleteConfirmText" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-outline-danger w-100">注销账号</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">最近订单</h2>
+                    <span class="badge bg-secondary">@Model.RecentOrders.Count</span>
+                </div>
+
+                @if (Model.RecentOrders.Count == 0)
+                {
+                    <div class="text-muted">暂无订单记录。</div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>图书</th>
+                                    <th>数量</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.RecentOrders)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold">@item.BookTitle</div>
+                                            <div class="text-muted small">#@item.Id · @item.OrderDate.ToString("yyyy-MM-dd")</div>
+                                        </td>
+                                        <td>@item.Quantity</td>
+                                        <td><span class="badge bg-info text-dark">@item.Status</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
