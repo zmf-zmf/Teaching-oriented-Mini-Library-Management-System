@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SmallShopSystem.Data;
 using SmallShopSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SmallShopSystem.Controllers
 {
+    [Authorize(Roles = "Admin")] // 仅管理员维护分类
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -28,26 +29,16 @@ namespace SmallShopSystem.Controllers
         // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
+            var category = await _context.Categories.FirstOrDefaultAsync(m => m.Id == id);
+            if (category == null) return NotFound();
 
             return View(category);
         }
 
         // GET: Categories/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         // POST: Categories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -68,16 +59,10 @@ namespace SmallShopSystem.Controllers
         // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
+            if (category == null) return NotFound();
             return View(category);
         }
 
@@ -88,10 +73,7 @@ namespace SmallShopSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Category category)
         {
-            if (id != category.Id)
-            {
-                return NotFound();
-            }
+            if (id != category.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -102,14 +84,8 @@ namespace SmallShopSystem.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!CategoryExists(category.Id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -119,17 +95,10 @@ namespace SmallShopSystem.Controllers
         // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
+            var category = await _context.Categories.FirstOrDefaultAsync(m => m.Id == id);
+            if (category == null) return NotFound();
 
             return View(category);
         }
@@ -140,18 +109,12 @@ namespace SmallShopSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var category = await _context.Categories.FindAsync(id);
-            if (category != null)
-            {
-                _context.Categories.Remove(category);
-            }
+            if (category != null) _context.Categories.Remove(category);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(int id)
-        {
-            return _context.Categories.Any(e => e.Id == id);
-        }
+        private bool CategoryExists(int id) => _context.Categories.Any(e => e.Id == id);
     }
 }

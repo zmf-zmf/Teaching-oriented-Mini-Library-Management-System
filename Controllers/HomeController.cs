@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmallShopSystem.Models;
 using SmallShopSystem.Data;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SmallShopSystem.Controllers
 {
@@ -16,24 +17,27 @@ namespace SmallShopSystem.Controllers
             _context = context;
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
-            // 1. 获取待发货订单数
+            // 待发货订单
             ViewBag.PendingOrders = _context.Orders
                 .Count(o => o.Status == "待发货");
 
-            // 2. 获取库存预警数 (少于 10 本的书籍)
+            // 库存预警 (阈值 10)
             ViewBag.LowStockCount = _context.Books
                 .Count(b => b.Stock < 10);
 
             return View();
         }
 
+        [AllowAnonymous]
         public IActionResult Privacy()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

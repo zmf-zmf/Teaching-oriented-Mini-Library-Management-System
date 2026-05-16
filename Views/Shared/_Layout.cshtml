@@ -50,6 +50,26 @@
                             <a class="nav-link fw-bold text-info" asp-area="" asp-controller="Orders" asp-action="Index">订单/发货</a>
                         </li>
                     </ul>
+
+                    <ul class="navbar-nav">
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link">您好，@User.Identity.Name</a>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-link nav-link" style="display:inline; padding: 0.5rem 1rem;">登出</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">登录</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>

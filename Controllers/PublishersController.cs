@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SmallShopSystem.Data;
 using SmallShopSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SmallShopSystem.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class PublishersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -28,26 +29,16 @@ namespace SmallShopSystem.Controllers
         // GET: Publishers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var publisher = await _context.Publishers
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (publisher == null)
-            {
-                return NotFound();
-            }
+            var publisher = await _context.Publishers.FirstOrDefaultAsync(m => m.Id == id);
+            if (publisher == null) return NotFound();
 
             return View(publisher);
         }
 
         // GET: Publishers/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         // POST: Publishers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -68,16 +59,10 @@ namespace SmallShopSystem.Controllers
         // GET: Publishers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var publisher = await _context.Publishers.FindAsync(id);
-            if (publisher == null)
-            {
-                return NotFound();
-            }
+            if (publisher == null) return NotFound();
             return View(publisher);
         }
 
@@ -88,10 +73,7 @@ namespace SmallShopSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Contact,Phone")] Publisher publisher)
         {
-            if (id != publisher.Id)
-            {
-                return NotFound();
-            }
+            if (id != publisher.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -102,14 +84,8 @@ namespace SmallShopSystem.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PublisherExists(publisher.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!PublisherExists(publisher.Id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -119,17 +95,10 @@ namespace SmallShopSystem.Controllers
         // GET: Publishers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var publisher = await _context.Publishers
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (publisher == null)
-            {
-                return NotFound();
-            }
+            var publisher = await _context.Publishers.FirstOrDefaultAsync(m => m.Id == id);
+            if (publisher == null) return NotFound();
 
             return View(publisher);
         }
@@ -140,18 +109,12 @@ namespace SmallShopSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var publisher = await _context.Publishers.FindAsync(id);
-            if (publisher != null)
-            {
-                _context.Publishers.Remove(publisher);
-            }
+            if (publisher != null) _context.Publishers.Remove(publisher);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PublisherExists(int id)
-        {
-            return _context.Publishers.Any(e => e.Id == id);
-        }
+        private bool PublisherExists(int id) => _context.Publishers.Any(e => e.Id == id);
     }
 }
