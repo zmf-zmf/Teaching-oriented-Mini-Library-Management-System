@@ -44,7 +44,7 @@ namespace SmallShopSystem.Controllers
         // GET: Orders/Create
         public IActionResult Create()
         {
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name");
+            ViewData["CustomerId"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Customers, "Id", "Address");
             return View();
         }
 
@@ -59,7 +59,7 @@ namespace SmallShopSystem.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name", order.CustomerId);
+            ViewData["CustomerId"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Customers, "Id", "Address", order.CustomerId);
             return View(order);
         }
 
@@ -71,7 +71,7 @@ namespace SmallShopSystem.Controllers
 
             var order = await _context.Orders.FindAsync(id);
             if (order == null) return NotFound();
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name", order.CustomerId);
+            ViewData["CustomerId"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Customers, "Id", "Address", order.CustomerId);
             return View(order);
         }
 
@@ -97,7 +97,7 @@ namespace SmallShopSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name", order.CustomerId);
+            ViewData["CustomerId"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Customers, "Id", "Address", order.CustomerId);
             return View(order);
         }
 

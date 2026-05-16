@@ -1,10 +1,12 @@
-﻿namespace SmallShopSystem.Models
+﻿using System.Collections.Generic;
+
+namespace SmallShopSystem.Models
 {
     public class Publisher
     {
         public int Id { get; set; }
 
-        public string Name { get; set; } // 出版商名称，如“清华大学出版社”
+        public string Name { get; set; } = null!; // 出版商名称，如“清华大学出版社”
 
         public string? Contact { get; set; } // 联系人姓名
 

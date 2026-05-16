@@ -11,7 +11,7 @@ namespace SmallShopSystem.Data
             var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
             var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
 
-            string[] roles = new[] { "Admin", "Warehouse", "Support" };
+            string[] roles = new[] { "Admin", "Warehouse", "Support", "Customer" };
 
             foreach (var role in roles)
             {
@@ -26,34 +26,58 @@ namespace SmallShopSystem.Data
                 }
             }
 
-            // 从配置读取默认管理员账号（仅用于开发）
-            var adminEmail = configuration["AdminUser:Email"] ?? "admin@smallshop.local";
-            var adminPassword = configuration["AdminUser:Password"] ?? "Admin123!";
-
-            var adminUser = await userManager.FindByEmailAsync(adminEmail);
-            if (adminUser == null)
+            var defaultUsers = new[]
             {
-                adminUser = new IdentityUser
+                new { Role = "Admin", Email = configuration["AdminUser:Email"] ?? "admin@smallshop.local", Password = configuration["AdminUser:Password"] ?? "Admin123!" },
+                new { Role = "Warehouse", Email = configuration["WarehouseUser:Email"] ?? "warehouse@smallshop.local", Password = configuration["WarehouseUser:Password"] ?? "Warehouse123!" },
+                new { Role = "Support", Email = configuration["SupportUser:Email"] ?? "support@smallshop.local", Password = configuration["SupportUser:Password"] ?? "Support123!" },
+                new { Role = "Customer", Email = configuration["CustomerUser:Email"] ?? "customer@smallshop.local", Password = configuration["CustomerUser:Password"] ?? "Customer123!" }
+            };
+
+            foreach (var account in defaultUsers)
+            {
+                await EnsureUserInRoleAsync(userManager, loggerFactory, account.Email, account.Password, account.Role);
+            }
+        }
+
+        private static async Task EnsureUserInRoleAsync(
+            UserManager<IdentityUser> userManager,
+            ILoggerFactory? loggerFactory,
+            string email,
+            string password,
+            string role)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new IdentityUser
                 {
-                    UserName = adminEmail,
-                    Email = adminEmail,
+                    UserName = email,
+                    Email = email,
                     EmailConfirmed = true
                 };
-                var result = await userManager.CreateAsync(adminUser, adminPassword);
-                if (result.Succeeded)
+
+                var result = await userManager.CreateAsync(user, password);
+                if (!result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(adminUser, "Admin");
-                }
-                else
-                {
-                    loggerFactory?.CreateLogger("SeedData")?.LogWarning("Failed to create admin user: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
+                    loggerFactory?.CreateLogger("SeedData")?.LogWarning(
+                        "Failed to create {Role} user: {Errors}",
+                        role,
+                        string.Join(", ", result.Errors.Select(e => e.Description)));
+                    return;
                 }
             }
-            else
+
+            if (!await userManager.IsInRoleAsync(user, role))
             {
-                if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+                var addResult = await userManager.AddToRoleAsync(user, role);
+                if (!addResult.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(adminUser, "Admin");
+                    loggerFactory?.CreateLogger("SeedData")?.LogWarning(
+                        "Failed to add {Email} to role {Role}: {Errors}",
+                        email,
+                        role,
+                        string.Join(", ", addResult.Errors.Select(e => e.Description)));
                 }
             }
         }

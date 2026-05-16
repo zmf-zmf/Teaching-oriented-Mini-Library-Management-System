@@ -1,4 +1,5 @@
-﻿// Models/Order.cs
+﻿using System;
+
 namespace SmallShopSystem.Models
 {
     public class Order
@@ -9,16 +10,5 @@ namespace SmallShopSystem.Models
 
         public int CustomerId { get; set; }
         public Customer? Customer { get; set; }
-    }
-}
-
-// Models/Customer.cs
-namespace YourProjectName.Models
-{
-    public class Customer
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Address { get; set; } // 收货地址
     }
 }
