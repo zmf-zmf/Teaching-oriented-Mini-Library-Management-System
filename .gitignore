@@ -1,0 +1,10 @@
+﻿# VS缓存
+.vs/
+bin/
+obj/
+*.user
+*.suo
+
+# 临时文件
+*.log
+*.tmp

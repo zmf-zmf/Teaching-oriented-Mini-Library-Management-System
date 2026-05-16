@@ -1,0 +1,67 @@
+﻿@{
+    ViewData["Title"] = "控制面板";
+}
+
+<div class="text-center py-5 border-bottom mb-5">
+    <h1 class="display-4 fw-bold text-uppercase" style="letter-spacing: 5px;">SmallShop Admin</h1>
+    <p class="lead text-muted">书店后台管理系统 v1.0 | 实时数据监控</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0 text-center">
+            <div class="card-body p-4">
+                <div class="display-4 mb-3">📚</div>
+                <h4 class="card-title fw-bold">图书库存</h4>
+                <p class="card-text text-muted small">管理书籍信息、价格及实时库存状态。</p>
+                <hr />
+                <a asp-controller="Books" asp-action="Index" class="btn btn-dark w-100 py-2">进入仓库</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0 text-center">
+            <div class="card-body p-4">
+                <div class="display-4 mb-3">🚚</div>
+                <h4 class="card-title fw-bold">订单中心</h4>
+                <p class="card-text text-muted small">查看客户订单并更新物流/发货状态。</p>
+                <hr />
+                <a asp-controller="Orders" asp-action="Index" class="btn btn-dark w-100 py-2">处理订单</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0 text-center">
+            <div class="card-body p-4">
+                <div class="display-4 mb-3">👥</div>
+                <h4 class="card-title fw-bold">客户管理</h4>
+                <p class="card-text text-muted small">维护客户信息、购买记录及收货地址。</p>
+                <hr />
+                <a asp-controller="Customers" asp-action="Index" class="btn btn-dark w-100 py-2">管理客户</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5 g-3">
+    <div class="col-md-4">
+        <div class="p-3 border rounded bg-light text-center shadow-sm">
+            <div class="text-muted small text-uppercase">待发货订单</div>
+            <div class="h4 fw-bold mb-0 text-warning">@ViewBag.PendingOrders</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="p-3 border rounded bg-light text-center shadow-sm">
+            <div class="text-muted small text-uppercase">库存预警</div>
+            <div class="h4 fw-bold mb-0 text-danger">@ViewBag.LowStockCount</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="p-3 border rounded bg-light text-center shadow-sm">
+            <div class="text-muted small text-uppercase">系统状态</div>
+            <div class="h4 fw-bold mb-0 text-success">RUNNING</div>
+        </div>
+    </div>
+</div>
