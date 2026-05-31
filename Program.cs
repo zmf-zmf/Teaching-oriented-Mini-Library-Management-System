@@ -55,9 +55,9 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
@@ -69,3 +69,6 @@ app.MapControllerRoute(
 
 app.MapRazorPages();
 app.Run();
+
+// Make the Program class visible to WebApplicationFactory in tests
+public partial class Program { }
